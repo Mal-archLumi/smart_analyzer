@@ -1,26 +1,129 @@
-@import "tailwindcss";
+@import url('https://api.fontshare.com/v2/css?f[]=chillax@300,400,500,600,700&f[]=excon@400,500,700&f[]=clash-display@400,500,600,700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 95%;
+    
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 95%;
+    
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --accent: 210 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84.2% 60.2%;
+    
+    --border: 240 4% 26%;
+    --input: 240 4% 26%;
+    --ring: 240 5% 84%;
+    
+    --chart-1: 142 76% 36%;
+    --chart-2: 210 100% 52%;
+    --chart-3: 280 70% 50%;
+    --chart-4: 30 80% 55%;
+    --chart-5: 170 70% 45%;
+    
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: linear-gradient(135deg, 
+      hsl(240 10% 4%) 0%,
+      hsl(240 15% 6%) 50%,
+      hsl(240 20% 8%) 100%
+    );
+    font-family: 'Excon', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .font-heading {
+    font-family: 'Clash Display', sans-serif;
+  }
+  
+  .font-mono {
+    font-family: 'Chillax', monospace;
+  }
+  
+  .bg-grid {
+    background-image: 
+      linear-gradient(to right, hsl(var(--border) / 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  
+  .glow {
+    filter: drop-shadow(0 0 20px hsl(var(--primary) / 0.3));
+  }
+  
+  .scan-line {
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      hsl(var(--primary) / 0.1) 50%,
+      transparent 100%
+    );
+    animation: scan 3s linear infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+  
+  @keyframes ripple {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(3); opacity: 0; }
+  }
+  
+  @keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+  }
+  
+  @keyframes stagger {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-ripple {
+    animation: ripple 2s linear infinite;
+  }
+  
+  .animate-glitch {
+    animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+  
+  .animate-stagger {
+    animation: stagger 0.5s ease-out both;
+  }
 }
