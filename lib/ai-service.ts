@@ -1,3 +1,4 @@
+// lib/ai-service.ts - UPDATED VERSION
 'use client';
 
 interface UserData {
@@ -23,32 +24,24 @@ interface AIResponse {
   recommendations: Recommendation[];
 }
 
-const FALLBACK_RECOMMENDATIONS: AIResponse = {
-  overall_advice: "Based on your profile, consider exploring opportunities aligned with Kenya's Vision 2030. Focus on building practical skills through the CBC curriculum.",
+// Simple error message instead of fallback data
+const ERROR_RESPONSE: AIResponse = {
+  overall_advice: "⚠️ Unable to connect to AI service at the moment. Please check your internet connection and try again. If the problem persists, the AI service might be temporarily unavailable.",
   recommendations: [
     {
-      sector: "Technology & Digital Innovation",
-      match_percentage: 85,
-      explanation: "Your interests in tech and strong aptitude scores indicate a good fit for digital careers, leveraging Kenya's growing tech hub.",
-      cbc_subjects: ["Mathematics", "Computer Science", "Physics", "English"],
-      skills_to_develop: ["Programming", "Data Analysis", "Problem Solving", "Communication"],
-      resources: ["Kenya ICT Board", "Nairobi Tech Community", "Online Courses on Coursera"],
-      next_steps: ["Enroll in coding bootcamps", "Participate in tech hackathons", "Build personal projects", "Network with industry professionals"]
-    },
-    {
-      sector: "Engineering & Manufacturing",
-      match_percentage: 78,
-      explanation: "Your practical interests and aptitude align with engineering, supporting Vision 2030's infrastructure goals.",
-      cbc_subjects: ["Mathematics", "Physics", "Chemistry", "Design & Technology"],
-      skills_to_develop: ["Technical Drawing", "Project Management", "Innovation", "Teamwork"],
-      resources: ["Kenya Engineers Registration Board", "Jomo Kenyatta University", "Industrial Attachments"],
-      next_steps: ["Pursue STEM clubs", "Attend engineering workshops", "Gain work experience", "Apply for scholarships"]
+      sector: "Service Temporarily Unavailable",
+      match_percentage: 0,
+      explanation: "We're unable to generate personalized recommendations right now. Please try again in a few moments.",
+      cbc_subjects: ["Please retry the analysis"],
+      skills_to_develop: ["Check your connection", "Refresh the page", "Try again later"],
+      resources: ["Contact support if issue persists"],
+      next_steps: ["Refresh the page", "Check your internet", "Try again in 5 minutes"]
     }
   ]
 };
 
-// Update the buildOptimizedPrompt function
-const buildOptimizedPrompt = (userData: UserData): string => {
+// Helper to map interests to readable names
+const getInterestName = (id: string): string => {
   const interestMap: Record<string, string> = {
     'tech': 'Technology & Digital Innovation',
     'agri': 'Modern Agriculture & Agribusiness',
@@ -57,31 +50,39 @@ const buildOptimizedPrompt = (userData: UserData): string => {
     'creative': 'Creative Economy & Media',
     'geo': 'Geospatial Technologies & Climate Solutions'
   };
+  return interestMap[id] || id;
+};
 
+// Build optimized prompt for Gemini
+const buildOptimizedPrompt = (userData: UserData): string => {
   // Format aptitude responses
   const aptitudeText = Object.entries(userData.aptitude)
     .map(([key, value]) => `${key}: ${value.response} (score: ${value.score}/10)`)
     .join('\n');
 
-  return `Analyze this Kenyan student profile for career pathway recommendations:
+  return `You are an AI Career Pathway Advisor for Kenyan CBC students under Vision 2030.
+Analyze this profile and provide personalized career recommendations.
 
-STUDENT: ${userData.name}, Grade ${userData.grade}
-INTERESTS: ${userData.interests.map(id => interestMap[id] || id).join(', ')}
-APTITUDE RESPONSES:
+STUDENT PROFILE:
+- Name: ${userData.name}
+- Grade: ${userData.grade}
+- Interests: ${userData.interests.map(getInterestName).join(', ')}
+- Aptitude Assessment:
 ${aptitudeText}
-PERSONAL ESSAY: "${userData.essay || 'No essay provided'}"
+- Personal Essay: "${userData.essay || 'No essay provided'}"
 
-Provide 2-3 detailed pathway recommendations with:
-1. Match percentage (0-100)
-2. Explanation why it fits their specific profile
-3. CBC subjects to focus on
-4. Skills to develop
-5. Kenyan resources
-6. Actionable next steps
+REQUIREMENTS:
+1. Provide 2-3 career pathway recommendations
+2. For each, include:
+   - Sector name
+   - Match percentage (0-100)
+   - Detailed explanation of why it fits
+   - 4 CBC subjects to focus on
+   - 4 skills to develop
+   - 3 Kenyan resources/institutions
+   - 4 actionable next steps
 
-Focus on Kenya's Vision 2030 and CBC curriculum. Be practical and realistic.
-
-Return ONLY JSON:
+FORMAT: Return ONLY valid JSON:
 {
   "overall_advice": "string",
   "recommendations": [
@@ -89,116 +90,206 @@ Return ONLY JSON:
       "sector": "string",
       "match_percentage": number,
       "explanation": "string",
-      "cbc_subjects": ["string","string","string","string"],
-      "skills_to_develop": ["string","string","string","string"],
-      "resources": ["string","string","string"],
-      "next_steps": ["string","string","string","string"]
+      "cbc_subjects": ["string", "string", "string", "string"],
+      "skills_to_develop": ["string", "string", "string", "string"],
+      "resources": ["string", "string", "string"],
+      "next_steps": ["string", "string", "string", "string"]
     }
   ]
-}`;
+}
+
+Focus on practical, realistic advice for Kenyan students.`;
+};
+
+// Helper to parse AI response with better error handling
+const parseAIResponse = (text: string): AIResponse => {
+  try {
+    console.log('📝 Attempting to parse AI response...');
+    
+    // Clean the text - remove markdown code blocks
+    let cleanText = text
+      .replace(/```json\s*/g, '')
+      .replace(/```\s*/g, '')
+      .replace(/^JSON:\s*/i, '')
+      .trim();
+    
+    // Try to extract JSON if it's wrapped in other text
+    const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      cleanText = jsonMatch[0];
+    }
+    
+    const parsed = JSON.parse(cleanText);
+    
+    // Validate the response structure
+    if (!parsed.overall_advice || !Array.isArray(parsed.recommendations)) {
+      console.error('Invalid response structure:', parsed);
+      throw new Error('Invalid response structure from AI');
+    }
+    
+    console.log('✅ Successfully parsed AI response');
+    return parsed;
+    
+  } catch (error) {
+    console.error('❌ Failed to parse AI response:', error);
+    console.log('Raw text that failed:', text.substring(0, 500));
+    throw new Error('Failed to parse AI response');
+  }
 };
 
 export async function getAIRecommendations(userData: UserData): Promise<AIResponse> {
-  const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY
-;
+  console.log('🔍 Starting AI analysis for:', userData.name);
   
-  console.log('🔍 AI Service called with detailed data:', userData);
+  // Try to get API key from environment (works in both dev and prod)
+  const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  
+  console.log('🔑 Environment check:', {
+    hasEnvKey: !!API_KEY,
+    envKeyLength: API_KEY?.length || 0,
+    envKeys: Object.keys(process.env).filter(key => key.includes('GEMINI') || key.includes('API'))
+  });
 
   if (!API_KEY) {
-    console.error('❌ NO API KEY FOUND - Using fallback');
-    return FALLBACK_RECOMMENDATIONS;
+    console.error('❌ API key not found in environment variables');
+    console.log('⚠️ Please ensure NEXT_PUBLIC_GEMINI_API_KEY is set in your environment');
+    return ERROR_RESPONSE;
   }
 
   try {
     const prompt = buildOptimizedPrompt(userData);
+    console.log('📤 Prompt built, sending to Gemini...');
 
-    console.log('🚀 Sending detailed analysis to Gemini API...');
     
     const MODEL_ID = 'gemini-2.5-flash-lite';
+    console.log(`🎯 Using model: ${MODEL_ID}`);
 
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_ID}:generateContent?key=${API_KEY}`;
+    console.log('🌐 API URL:', apiUrl.replace(API_KEY, '***'));
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{ 
+          parts: [{ text: prompt }] 
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 2000,
+        }
+      })
+    });
+
+    console.log(`📊 Response status: ${response.status} ${response.statusText}`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText.substring(0, 500)
+      });
+      
+      // Try alternative model if the first fails
+      if (response.status === 404 || errorText.includes('model not found')) {
+        console.log('🔄 Trying alternative model (gemini-pro)...');
+        
+        const altUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+        const altResponse = await fetch(altUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 2000,
+            }
+          })
+        });
+        
+        if (altResponse.ok) {
+          const altData = await altResponse.json();
+          const text = altData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          return parseAIResponse(text);
+        }
+      }
+      
+      throw new Error(`API request failed: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Received API response');
+    
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    
+    if (!text) {
+      console.error('No response text in API response');
+      throw new Error('Empty response from AI');
+    }
+
+    console.log('📝 Raw response length:', text.length, 'characters');
+    return parseAIResponse(text);
+    
+  } catch (error) {
+    console.error('💥 AI Service Error:', error);
+    
+    // Check if it's a network error
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      console.error('🌐 Network error detected - check internet connection');
+      return {
+        ...ERROR_RESPONSE,
+        overall_advice: "🌐 Network connection issue. Please check your internet connection and try again."
+      };
+    }
+    
+    // Check if it's an API key error
+    if (error instanceof Error && error.message.includes('API key')) {
+      console.error('🔑 API key error detected');
+      return {
+        ...ERROR_RESPONSE,
+        overall_advice: "🔑 API configuration issue. Please check your API key configuration."
+      };
+    }
+    
+    return ERROR_RESPONSE;
+  }
+}
+
+// Optional: Add a test function for debugging
+export async function testAIConnection(): Promise<boolean> {
+  const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  
+  if (!API_KEY) {
+    console.error('No API key found for test');
+    return false;
+  }
+
+  try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_ID}:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [{
+            parts: [{ text: 'Say "OK" if working' }]
+          }],
           generationConfig: {
-            temperature: 0.8,
-            maxOutputTokens: 2000,
-            responseMimeType: 'application/json',
-            responseSchema: {
-              type: 'object',
-              properties: {
-                overall_advice: { type: 'string' },
-                recommendations: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      sector: { type: 'string' },
-                      match_percentage: { type: 'number' },
-                      explanation: { type: 'string' },
-                      cbc_subjects: { type: 'array', items: { type: 'string' } },
-                      skills_to_develop: { type: 'array', items: { type: 'string' } },
-                      resources: { type: 'array', items: { type: 'string' } },
-                      next_steps: { type: 'array', items: { type: 'string' } }
-                    },
-                    required: ['sector', 'match_percentage', 'explanation', 'cbc_subjects', 'skills_to_develop', 'resources', 'next_steps']
-                  }
-                }
-              },
-              required: ['overall_advice', 'recommendations']
-            }
+            maxOutputTokens: 10,
           }
         })
       }
     );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API Error Response:', errorText);
-      throw new Error(`API request failed: ${response.status}`);
-    }
-
     const data = await response.json();
-    console.log('📦 Full API Response:', JSON.stringify(data, null, 2));
-    
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    
-    if (!text) {
-      console.error('No response text from AI');
-      throw new Error('No response text from AI');
-    }
-
-    console.log('📝 Raw AI Response:', text);
-
-    // Try to parse the response
-    try {
-      const parsed = JSON.parse(text);
-      console.log('✅ Successfully parsed AI recommendations:', parsed);
-      return parsed;
-    } catch (parseError) {
-      console.error('❌ JSON Parse Error:', parseError);
-      console.error('Raw text that failed to parse:', text);
-      
-      // Try to extract JSON from markdown code blocks
-      const codeBlockMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
-      if (codeBlockMatch) {
-        try {
-          const parsed = JSON.parse(codeBlockMatch[1]);
-          console.log('✅ Parsed from code block');
-          return parsed;
-        } catch (e) {
-          console.error('Failed to parse from code block');
-        }
-      }
-      
-      throw parseError;
-    }
-    
+    console.log('🧪 Test response:', data);
+    return response.ok;
   } catch (error) {
-    console.error('❌ AI Service Error:', error);
-    return FALLBACK_RECOMMENDATIONS;
+    console.error('Test failed:', error);
+    return false;
   }
 }
