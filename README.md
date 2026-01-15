@@ -1,77 +1,89 @@
-SmartAnalyzer – AI Career Pathway Predictor for Kenyan Students
+# 🧠 SmartAnalyzer
 
+**AI Career Pathway Predictor for Kenyan Students**
 
+> **AI-powered career guidance for Kenyan secondary school students under the Competency-Based Curriculum (CBC).**
 
+SmartAnalyzer helps students make informed career decisions early by combining interests, aptitude, academic context, and AI-driven insights — all tailored to Kenya’s education system and high-growth sectors.
 
+---
 
+## 🚀 Overview
 
+SmartAnalyzer is a modern, AI-powered web application that delivers **personalized career recommendations** for Kenyan secondary school students.
 
+It analyzes:
 
-<div align="center">
+* Student interests
+* Academic level
+* Aptitude-based assessments
+* Optional personal essays
 
-AI-powered career guidance for Kenyan secondary school students under the Competency-Based Curriculum (CBC)
+…and maps the results to **CBC-aligned career pathways** that reflect Kenya’s current and future workforce needs.
 
-</div>
-🚀 Overview
+No accounts. No backend. No data retention.
 
-SmartAnalyzer is an AI-powered web application built to provide personalized career guidance for Kenyan secondary school students.
-It analyzes interests, academic performance, aptitude assessments, and personal essays to recommend career pathways aligned with Kenya’s high-growth sectors and the CBC framework.
+---
 
-✨ Key Features
+## ✨ Key Features
 
-🤖 AI-Powered Analysis – Google Gemini AI for personalized career insights
+* 🤖 **AI-Powered Analysis** — Google Gemini AI for personalized career insights
+* 📊 **Comprehensive Assessment** — interests, aptitude, academics, and self-expression
+* 🎯 **CBC-Aligned Pathways** — recommendations mapped to Kenya’s curriculum
+* 📱 **Fully Responsive** — mobile-first, works on all devices
+* 🎨 **Modern UI/UX** — dark theme, glitch effects, particles, animations
+* 💾 **Session-Only Storage** — no backend, no persistence
+* ⚡ **Real-Time Results** — instant analysis with intelligent fallback logic
 
-📊 Comprehensive Assessment – Interests, aptitude, academics, and self-expression
+---
 
-🎯 CBC-Aligned Pathways – Recommendations mapped to Kenya’s curriculum
+## 🧭 Assessment Flow
 
-📱 Fully Responsive – Mobile-first, accessible on all devices
+```
+Welcome Screen
+      ↓
+Personal Details
+      ↓
+Interest Selection
+      ↓
+Aptitude Assessment
+      ↓
+Optional Essay
+      ↓
+AI Analysis
+      ↓
+Personalized Results
+```
 
-🎨 Modern UI/UX – Dark theme, glitch effects, animations, particle backgrounds
+---
 
-💾 Session Storage – No backend; data stays on the client
+## 🛠 Technology Stack
 
-⚡ Real-time Results – Instant analysis with intelligent fallback logic
+### Frontend
 
-📋 Assessment Flow
-graph TD
-    A[Welcome Screen] --> B[Personal Details]
-    B --> C[Interest Selection]
-    C --> D[Aptitude Assessment]
-    D --> E[Optional Essay]
-    E --> F[AI Analysis]
-    F --> G[Personalized Results]
+* **Next.js 14** (App Router)
+* **TypeScript**
+* **Tailwind CSS**
+* **Framer Motion**
+* **shadcn/ui**
 
-🎨 Technology Stack
-Frontend
+### AI Integration
 
-Next.js 14 (App Router)
+* **Google Gemini API**
+* Rule-based fallback engine
+* Local caching to reduce API calls
 
-TypeScript
+### Design System
 
-Tailwind CSS
+* Custom dark theme (emerald + electric blue)
+* Advanced animations (particles, glitch, scan lines)
+* Responsive grid with geometric overlays
 
-Framer Motion
+---
 
-shadcn/ui
+## 🏗 Project Architecture
 
-AI Integration
-
-Google Gemini API
-
-Rule-based fallback system
-
-Local caching to reduce API calls
-
-Design System
-
-Custom dark theme (emerald + electric blue)
-
-Advanced animations (particles, glitch, scan lines)
-
-Responsive grid with geometric overlays
-
-🏗️ Project Architecture
+```
 smart-analyzer/
 ├── app/
 │   ├── layout.tsx
@@ -91,239 +103,200 @@ smart-analyzer/
 │   └── utils.ts
 └── public/
     └── assets/
+```
 
-🎯 How It Works
-1. Personal Profile Collection
+---
 
-Student name and grade level
+## 🎯 How It Works
 
-Session-based persistence
+### 1️⃣ Personal Profile Collection
 
-2. Interest Mapping
+* Student name & grade level
+* Session-based persistence only
+
+### 2️⃣ Interest Mapping
 
 Six high-growth sectors:
 
-🤖 Technology & Digital
+* 🤖 Technology & Digital
+* 🌱 Modern Agriculture
+* ⚙️ Engineering & Manufacturing
+* 🏥 Health & Biomedical
+* 🎨 Creative Economy & Media
+* 🌍 Geospatial & Climate Tech
 
-🌱 Modern Agriculture
+### 3️⃣ Aptitude Assessment
 
-⚙️ Engineering & Manufacturing
+* Scenario-based questions
+* Evaluates problem-solving, creativity, analysis, teamwork, adaptability, and communication
 
-🏥 Health & Biomedical
+### 4️⃣ Optional Essay
 
-🎨 Creative Economy & Media
+* Self-description input
+* Auto-save with live word & character tracking
 
-🌍 Geospatial & Climate Tech
+### 5️⃣ AI Analysis
 
-3. Aptitude Assessment
+* Structured prompt generation
+* Gemini AI with intelligent fallback rules
 
-Scenario-based questions
+### 6️⃣ Results Visualization
 
-Evaluates problem solving, creativity, analysis, teamwork, adaptability, and communication
+* Match percentage indicators
+* CBC subject alignment
+* Skills roadmap & Kenyan learning resources
+* Clear, actionable next steps
 
-4. Optional Essay
+---
 
-Self-description input
+## 🔄 Data Flow
 
-Auto-save with live word and character tracking
+```
+User → Frontend → Session Storage → AI Service → Gemini API
+                     ↓ (fallback)
+               Rule-based Engine
+```
 
-5. AI Analysis
+Results are returned instantly and rendered client-side.
 
-Data aggregation and structured prompts
+---
 
-Gemini AI with intelligent fallback logic
+## 🎨 Design Philosophy
 
-6. Results Visualization
+### Typography
 
-Match percentage indicators
+* **Clash Display** — headings
+* **Excon** — body text
+* **Chillax** — technical elements
 
-CBC subject alignment
+### Color Palette
 
-Skills roadmap and Kenyan resources
+* **Primary:** #22c55e (Emerald Green)
+* **Accent:** #2563eb (Electric Blue)
+* **Background:** Gradient (#0f172a → #1e293b)
+* **Cards:** Dark glassmorphism
 
-Clear, actionable next steps
+### Animations
 
-📊 Data Flow Diagram
-sequenceDiagram
-    participant User
-    participant Frontend
-    participant SessionStorage
-    participant AIService
-    participant GeminiAPI
+* Particle systems
+* Glitch text effects
+* CRT-style scan lines
+* Staggered content reveals
 
-    User->>Frontend: Complete Assessment
-    Frontend->>SessionStorage: Store Data
-    Frontend->>AIService: Request Analysis
-    AIService->>GeminiAPI: Send Profile Data
-    alt API Available
-        GeminiAPI-->>AIService: AI Recommendations
-    else API Unavailable
-        AIService->>AIService: Rule-based Recommendations
-    end
-    AIService-->>Frontend: Results
-    Frontend-->>User: Display Insights
+---
 
-🎨 Design Philosophy
-Typography
+## 📈 Performance Metrics
 
-Clash Display – Headings
+* First Contentful Paint: **< 1.5s**
+* Time to Interactive: **< 3s**
+* Bundle Size: **~150KB (gzipped)**
+* AI Response Time: **< 5s** (with fallback)
+* Mobile Compatibility: **100%**
 
-Excon – Body text
+---
 
-Chillax – Technical elements
+## 🛡 Privacy & Security
 
-Color Palette
+### Data Handling
 
-Primary: #22c55e (Emerald Green)
+* No backend database
+* Session-only storage
+* Anonymous usage
+* No analytics or tracking
 
-Accent: #2563eb (Electric Blue)
+### Security
 
-Background: Gradient from #0f172a to #1e293b
+* Client-side processing
+* API keys via environment variables
+* Input validation & sanitization
 
-Cards: Glassmorphism on dark surfaces
+---
 
-Animations
+## 🎓 Educational Impact
 
-Particle systems
+* Aligned with **Kenya Vision 2030**
+* Promotes STEM & skill-based careers
+* Bridges education with real industry needs
 
-Glitch text effects
+### CBC Integration
 
-CRT-style scan lines
+* Subject-to-career mapping
+* Competency-focused pathways
+* Local learning resources
 
-Staggered content reveals
+---
 
-🤝 Contributing
+## 📱 Mobile Experience
+
+* Touch-optimized UI
+* Gesture-friendly navigation
+* Reduced data usage
+
+Target usage distribution:
+
+* Mobile phones: 45%
+* Tablets: 25%
+* Desktop: 20%
+* Laptops: 10%
+
+---
+
+## 🚀 Deployment
+
+* **Vercel** (recommended)
+* Netlify
+* Docker-ready
+
+---
+
+## 🤝 Contributing
 
 Contributions are welcome.
 
-Fork the repository
+1. Fork the repository
+2. Create a feature branch
+3. Commit meaningful changes
+4. Open a pull request
 
-Create a feature branch
+### Guidelines
 
-Commit meaningful changes
+* Follow TypeScript best practices
+* Maintain responsiveness
+* Include error handling & fallbacks
+* Test across devices
 
-Open a pull request
+---
 
-Guidelines
+## 📄 License
 
-Follow TypeScript best practices
+MIT License. See `LICENSE` for details.
 
-Maintain responsiveness
+---
 
-Include error handling and fallbacks
+## 🙏 Acknowledgments
 
-Test across devices
+* Google Gemini AI
+* Kenya Ministry of Education (CBC)
+* SkillsFuture Singapore
+* Next.js & Tailwind CSS communities
 
-📈 Performance Metrics
+---
 
-First Contentful Paint: < 1.5s
+## 📞 Support & Contact
 
-Time to Interactive: < 3s
+* GitHub Issues
+* Email: [support@smartanalyzer.ke](mailto:support@smartanalyzer.ke)
+* Twitter / X: **@SmartAnalyzerKE**
 
-Bundle Size: ~150KB (gzipped)
-
-API Response: < 5s (with fallback)
-
-Mobile Compatibility: 100%
-
-🛡️ Privacy & Security
-Data Handling
-
-No backend database
-
-Session-only storage
-
-Anonymous usage
-
-No analytics tracking
-
-Security
-
-Client-side processing
-
-No sensitive data transmission
-
-API keys via environment variables
-
-Input validation and sanitization
-
-🎓 Educational Impact
-
-Aligned with Kenya Vision 2030
-
-Promotes STEM and skill-based careers
-
-Bridges education and industry needs
-
-CBC Integration
-
-Subject-specific pathways
-
-Competency-focused development
-
-Local learning resources
-
-📱 Mobile Experience
-pie title Device Compatibility
-    "Mobile Phones" : 45
-    "Tablets" : 25
-    "Desktop" : 20
-    "Laptops" : 10
-
-
-Touch-optimized UI
-
-Gesture-friendly navigation
-
-Reduced data usage
-
-🚀 Deployment
-
-Vercel (recommended)
-
-Netlify
-
-Docker-ready setup
-
-📄 License
-
-MIT License. See LICENSE for details.
-
-🙏 Acknowledgments
-
-Google Gemini AI
-
-Kenya Ministry of Education (CBC)
-
-SkillsFuture Singapore
-
-Next.js & Tailwind CSS communities
-
-📞 Support & Contact
-
-GitHub Issues
-
-Email: support@smartanalyzer.ke
-
-Twitter/X: @SmartAnalyzerKE
+---
 
 <div align="center">
 
-🏆 Hackathon Project
+🏆 **Hackathon Project**
 Built for Kenyan Students
 
-</div>
-📊 Project Stats
-
-
-
-
-
-
-
-
-
-
 ⭐ Star the repo if it helps
-🔄 Share with educators and students
+🔄 Share with educators & students
 💡 Contribute to accessible career guidance in Africa
+
+</div>
