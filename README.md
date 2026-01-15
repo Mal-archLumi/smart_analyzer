@@ -285,8 +285,8 @@ MIT License. See `LICENSE` for details.
 ## 📞 Support & Contact
 
 * GitHub Issues
-* Email: [support@smartanalyzer.ke](mailto:support@smartanalyzer.ke)
-* Twitter / X: **@SmartAnalyzerKE**
+* Email: [support@smartanalyzer.ke](mailto:makutualvine@gmail.com)
+* Twitter / X: **@Soul_reaper_KE**
 
 ---
 
